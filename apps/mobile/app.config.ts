@@ -252,7 +252,8 @@ const config: ExpoConfig = {
     fallbackToCacheTimeout: 0,
   },
   ios: {
-    icon: variant.assets.iosIcon,
+    // Forks can point T3CODE_IOS_ICON at their own Icon Composer project.
+    icon: repoEnv.T3CODE_IOS_ICON?.trim() || variant.assets.iosIcon,
     supportsTablet: true,
     requireFullScreen: process.env.T3_SHOWCASE_CAPTURE_BUILD === "1",
     bundleIdentifier: iosBundleIdentifier,
