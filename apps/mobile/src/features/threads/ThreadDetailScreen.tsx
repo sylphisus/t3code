@@ -260,6 +260,7 @@ export interface ThreadDetailScreenProps {
   readonly isCompacting: boolean;
   /** Set while the next send compacts the thread first. */
   readonly compactBeforeSend?: ThreadComposerProps["compactBeforeSend"];
+  readonly contextWindow?: ThreadComposerProps["contextWindow"];
   readonly creationState:
     | {
         readonly kind: "preparing";
@@ -1914,6 +1915,7 @@ function ThreadDetailBody(
                         environmentLabel={props.environmentLabel}
                         selectedThread={props.selectedThread}
                         compactBeforeSend={props.compactBeforeSend ?? null}
+                        contextWindow={props.contextWindow ?? null}
                         hasCompactableConversation={
                           hasCompactableConversation && !props.isCompacting
                         }

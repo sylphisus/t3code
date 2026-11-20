@@ -5,7 +5,11 @@ import * as Dialog from "../components/ui/Dialog";
 import { AuthOrchestrationOperateScope } from "@t3tools/contracts";
 import { readEnvironmentScope } from "./session";
 import { useAtomValue } from "@effect/atom-react";
-import { compactBeforeSendTokens } from "@t3tools/client-runtime/state/context-window";
+import {
+  compactBeforeSendTokens,
+  deriveLatestContextWindowSnapshot,
+  latestProviderTurnTokenUsage,
+} from "@t3tools/client-runtime/state/context-window";
 import { threadRuntimeIsActive } from "@t3tools/client-runtime/state/shell";
 import type { ThreadCheckpointSummary } from "@t3tools/client-runtime/state/thread-checkpoints";
 import { threadSteersDuringCompaction } from "@t3tools/client-runtime/state/thread-workflows";
@@ -480,6 +484,20 @@ export function useThreadComposerState(input: {
           now,
         })
       : null;
+  // Same snapshot desktop shows under thread details -> Context window.
+  const contextWindow = (() => {
+    if (selectedThreadProjection === null) return null;
+    const projection = selectedThreadProjection.projection;
+    const activeProviderThreadId = projection.thread.activeProviderThreadId;
+    const providerThread = projection.providerThreads.find(
+      (thread) => thread.id === activeProviderThreadId,
+    );
+    return deriveLatestContextWindowSnapshot(
+      selectedThreadVisibleTurnItems,
+      latestProviderTurnTokenUsage(projection.providerTurns, projection, providerThread),
+      providerThread,
+    );
+  })();
   const nowMinuteMs = useNowMinuteMs();
   const compactTokens =
     selectedDraft.freshContext === true
@@ -1048,6 +1066,7 @@ export function useThreadComposerState(input: {
   };
 
   return {
+    contextWindow,
     feedbackSubmissions,
     dismissFeedback,
     selectedThreadFeed,

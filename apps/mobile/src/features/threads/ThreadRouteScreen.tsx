@@ -1069,6 +1069,7 @@ function ThreadRouteContent(
           }
           isCompacting={composer.isCompacting}
           compactBeforeSend={composer.compactBeforeSend}
+          contextWindow={composer.contextWindow}
           runlessWorkActive={composer.runlessWorkActive}
           extensionStatuses={composer.extensionStatuses}
           providerSubagentStatus={composer.providerSubagentStatus}

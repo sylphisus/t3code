@@ -82,6 +82,8 @@ import {
 } from "../../components/ComposerToolbar";
 import { formatTokens } from "@t3tools/shared/usageFormat";
 import { ComposerModelControl } from "../../components/ComposerModelControl";
+import type { ContextWindowSnapshot } from "@t3tools/client-runtime/state/context-window";
+import { ComposerContextWindow } from "./ComposerContextWindow";
 import {
   composerStripAttachments,
   type DraftComposerFileAttachment,
@@ -151,6 +153,8 @@ export interface ThreadComposerProps {
     readonly keepFullHistory: boolean;
     readonly toggleKeepFullHistory: () => void;
   } | null;
+  /** How full the thread's context window is, shown beside the model picker. */
+  readonly contextWindow?: ContextWindowSnapshot | null;
   /** Arms a fresh session for the next message; absent where `/clear` is unavailable. */
   readonly onFreshSession?: () => void;
   readonly offersSideChat?: boolean;
@@ -722,6 +726,14 @@ export const ThreadComposer = function ThreadComposer(props: ThreadComposerProps
         onPress={compactBeforeSend.toggleKeepFullHistory}
       />
     ) : null;
+  // Hidden while the compact-before-send control shows, since that one already carries the count.
+  const contextWindowControl =
+    props.contextWindow && compactControl === null ? (
+      <ComposerContextWindow
+        usage={props.contextWindow}
+        size={usesLargeControls ? "large" : "regular"}
+      />
+    ) : null;
 
   return (
     <Animated.View
@@ -1027,6 +1039,7 @@ export const ThreadComposer = function ThreadComposer(props: ThreadComposerProps
                   entering={compactEditor.toolbarControlsEntering}
                 >
                   {compactControl}
+                  {contextWindowControl}
                   {modelControl}
                 </Animated.View>
                 <ComposerDictationStartAction
